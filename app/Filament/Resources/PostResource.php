@@ -22,6 +22,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -38,49 +40,68 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('title')->required()->maxLength(255),
-                TextInput::make('slug')->required()->maxLength(255),
-                ColorPicker::make('color')->required(),
-                TagsInput::make('tags')->required(),
-                Toggle::make('published')
-                    ->onIcon('heroicon-m-check-circle')
-                    ->offIcon('heroicon-m-x-circle'),
+                Section::make('create a post')
+                    ->description('Create a new post')
+                    ->collapsible()
+                    ->schema([
+                    TextInput::make('title')->required()->rules('min:3|max:10'),
+                    TextInput::make('slug')->required()->unique(Post::class, 'slug', ignoreRecord: true),
+                    ColorPicker::make('color')->required(),
+                    Select::make('category_id')
+                            ->label('Category')
+                            // ->options(Category::all()->pluck('name', 'id'))
+                            ->relationship('category', 'name')
+                            ->searchable()
+                            ->required(),            
+                    MarkdownEditor::make('content')->required()->columnSpanFull(),
+                ])->columnSpan(2)->columns(2),
+                Group::make()->schema([
+                    Section::make('image')
+                             ->schema([
+                                FileUpload::make('thumbnail')
+                                ->disk('public')
+                                ->directory('posts')
+                                ->required(),
+                    ])->columnSpan(1),
+                    Section::make('meta')
+                             ->schema([
+                                TagsInput::make('tags')->required(),
+                                Toggle::make('published')
+                                        ->onIcon('heroicon-m-check-circle')
+                                        ->offIcon('heroicon-m-x-circle'),
+                    ])->columnSpan(1),
+                ]),
                 // Checkbox::make('published'),
-                Select::make('category_id')
-                    ->label('Category')
-                    ->options(Category::all()->pluck('name', 'id'))->searchable(),
-                MarkdownEditor::make('content')->required(),
-                FileUpload::make('thumbnail')
-                    ->disk('public')
-                    ->directory('posts')
-                    ->required(),
-            ]);
+            ])->columns(3);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                ImageColumn::make('thumbnail'),
-                TextColumn::make('title')->searchable()->sortable(),
-                TextColumn::make('slug')->searchable()->sortable(),
-                ColorColumn::make('color')->searchable()
+                TextColumn::make('id')->searchable()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                ImageColumn::make('thumbnail')->toggleable(),
+                TextColumn::make('title')->searchable()->sortable()->toggleable(),
+                TextColumn::make('slug')->searchable()->sortable()->toggleable(),
+                ColorColumn::make('color')->searchable()->toggleable()
                             ->sortable()
                             ->copyable()
                             ->copyMessage('Color code copied')
                             ->copyMessageDuration(1500),
-                TextColumn::make('tags'),
+                TextColumn::make('tags')->toggleable(),
                 // CheckboxColumn::make('published'),
-                ToggleColumn::make('published')->onIcon('heroicon-m-check-circle')
-                ->offIcon('heroicon-m-x-circle'),
-                TextColumn::make('category.name')->searchable()->sortable(),
-                // TextColumn::make('content')->searchable()->sortable(),
+                ToggleColumn::make('published')->toggleable()
+                            ->onIcon('heroicon-m-check-circle')
+                            ->offIcon('heroicon-m-x-circle'),
+                TextColumn::make('category.name')->searchable()->sortable()->toggleable(),
+                TextColumn::make('created_at')->date()->searchable()->sortable()->toggleable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
