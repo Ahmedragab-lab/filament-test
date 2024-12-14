@@ -5,12 +5,14 @@ namespace App\Filament\Resources\PostResource\RelationManagers;
 use App\Filament\Resources\UserResource;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,7 +51,7 @@ class AuthorsRelationManager extends RelationManager
                     ->toggleable()
                     ->sortable(),
                 TextColumn::make('created_at')->date()->label(__('Created at')),
-                TextColumn::make('status')
+                CheckboxColumn::make('status')
                     ->toggleable()
                     ->label("State")
             ])

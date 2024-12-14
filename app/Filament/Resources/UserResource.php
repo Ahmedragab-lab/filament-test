@@ -13,7 +13,9 @@ use App\Tables\Columns\StateSwitcher;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -87,12 +89,16 @@ class UserResource extends Resource
                     ->color('gray')
                     ->alignLeft(),
                 TextColumn::make('created_at')->label(__('Created at')),
-                TextColumn::make('status')
+                CheckboxColumn::make('status')
                     ->toggleable()
                     ->label("State")
             ])
             ->filters([
-                //
+                Filter::make('status')->query(
+                    function(Builder $query): Builder {
+                        return $query->where('status', true);
+                    }
+                ),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

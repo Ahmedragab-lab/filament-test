@@ -30,6 +30,11 @@ use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use PhpParser\Node\Expr\Ternary;
+
 class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
@@ -107,7 +112,15 @@ class PostResource extends Resource
                 TextColumn::make('created_at')->date()->searchable()->sortable()->toggleable(),
             ])
             ->filters([
-                //
+                // Filter::make('published')->query(fn (Builder $query): Builder => $query->where('published', true)),
+                // Filter::make('unpublished')->query(fn (Builder $query): Builder => $query->where('published', false)),
+                // Filter::make('published')->toggle(),
+                TernaryFilter::make('published'),
+                SelectFilter::make('category')
+                ->relationship('category', 'name')
+                ->searchable()
+                ->multiple()
+                ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
