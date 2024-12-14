@@ -54,6 +54,11 @@ class UserResource extends Resource implements HasShieldPermissions
                 ->email()
                 ->maxLength(255)
                 ->unique(User::class, 'email', ignoreRecord: true),
+            TextInput::make('phone')
+                ->required()
+                ->tel()
+                ->maxLength(255)
+                ->unique(User::class, 'phone', ignoreRecord: true),
             TextInput::make('password')
                 ->same('passwordConfirmation')
                 ->visible(!$view)
@@ -117,6 +122,12 @@ class UserResource extends Resource implements HasShieldPermissions
                     ->toggleable()
                     ->color('gray')
                     ->alignLeft(),
+                TextColumn::make('phone')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable()
+                    ->color('gray')
+                    ->alignCenter(),
                 TextColumn::make('created_at')
                 ->label(__('Created at'))
                 ->date()
