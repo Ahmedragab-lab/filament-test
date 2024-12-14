@@ -22,6 +22,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Columns\ImageColumn;
+
 class UserResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = User::class;
@@ -81,6 +84,11 @@ class UserResource extends Resource implements HasShieldPermissions
                 ->multiple()
                 ->preload()
                 ->searchable(),
+            FileUpload::make('profile_photo_path')
+                ->label(__('Profile photo'))
+                ->disk('public')
+                ->directory('users')
+                ->required(),
         ];
     }
 
@@ -95,6 +103,9 @@ class UserResource extends Resource implements HasShieldPermissions
         return $table
             ->columns([
                 TextColumn::make('id')->sortable(),
+                ImageColumn::make('profile_photo_path')
+                    ->label('Profile photo')
+                    ->toggleable(),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable()
@@ -106,13 +117,19 @@ class UserResource extends Resource implements HasShieldPermissions
                     ->toggleable()
                     ->color('gray')
                     ->alignLeft(),
-                TextColumn::make('created_at')->label(__('Created at')),
+                TextColumn::make('created_at')
+                ->label(__('Created at'))
+                ->date()
+                ->searchable()
+                ->sortable()
+                ->toggleable(),
                 CheckboxColumn::make('status')
                     ->toggleable()
                     ->label("State"),
                 TextColumn::make('roles.name')
                     ->toggleable()
                     ->badge(),
+               
             ])
             ->filters([
                 Filter::make('status')->query(

@@ -14,11 +14,8 @@ use Filament\Models\Contracts\FilamentUser;
 class User extends Authenticatable implements FilamentUser
 {
     use HasFactory, Notifiable,HasRoles,HasPanelShield;
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+
+    protected $guarded = [];
     protected $hidden = [
         'password',
         'remember_token',
