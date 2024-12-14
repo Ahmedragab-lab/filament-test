@@ -10,6 +10,7 @@ use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use App\Tables\Columns\StateSwitcher;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -20,13 +21,24 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
-
-class UserResource extends Resource
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+class UserResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-users';
-
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+            'publish'
+        ];
+    }
     public static function getForm(bool $view = false): array
     {
         return [
@@ -63,6 +75,12 @@ class UserResource extends Resource
                 ->label(__('Active'))
                 ->onIcon('heroicon-m-check-circle')
                 ->offIcon('heroicon-m-x-circle'),
+            Select::make('roles')
+                ->relationship('roles', 'name')
+                ->required()
+                ->multiple()
+                ->preload()
+                ->searchable(),
         ];
     }
 
@@ -91,7 +109,10 @@ class UserResource extends Resource
                 TextColumn::make('created_at')->label(__('Created at')),
                 CheckboxColumn::make('status')
                     ->toggleable()
-                    ->label("State")
+                    ->label("State"),
+                TextColumn::make('roles.name')
+                    ->toggleable()
+                    ->badge(),
             ])
             ->filters([
                 Filter::make('status')->query(
