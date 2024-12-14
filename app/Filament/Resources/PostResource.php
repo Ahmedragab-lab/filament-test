@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
 use App\Filament\Resources\PostResource\RelationManagers;
+use App\Filament\Resources\PostResource\RelationManagers\AuthorsRelationManager;
 use App\Models\Category;
 use App\Models\Post;
 use Filament\Forms;
@@ -28,7 +29,7 @@ use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\ToggleColumn;
-
+use Filament\Forms\Components\CheckboxList;
 class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
@@ -44,32 +45,41 @@ class PostResource extends Resource
                     ->description('Create a new post')
                     ->collapsible()
                     ->schema([
-                    TextInput::make('title')->required()->rules('min:3|max:10'),
-                    TextInput::make('slug')->required()->unique(Post::class, 'slug', ignoreRecord: true),
-                    ColorPicker::make('color')->required(),
-                    Select::make('category_id')
+                        TextInput::make('title')->required()->rules('min:3|max:10'),
+                        TextInput::make('slug')->required()->unique(Post::class, 'slug', ignoreRecord: true),
+                        ColorPicker::make('color')->required(),
+                        Select::make('category_id')
                             ->label('Category')
                             // ->options(Category::all()->pluck('name', 'id'))
                             ->relationship('category', 'name')
                             ->searchable()
-                            ->required(),            
-                    MarkdownEditor::make('content')->required()->columnSpanFull(),
-                ])->columnSpan(2)->columns(2),
+                            ->required(),
+                        MarkdownEditor::make('content')->required()->columnSpanFull(),
+                    ])->columnSpan(2)->columns(2),
                 Group::make()->schema([
                     Section::make('image')
-                             ->schema([
-                                FileUpload::make('thumbnail')
+                        ->schema([
+                            FileUpload::make('thumbnail')
                                 ->disk('public')
                                 ->directory('posts')
                                 ->required(),
-                    ])->columnSpan(1),
+                        ])->columnSpan(1),
                     Section::make('meta')
-                             ->schema([
-                                TagsInput::make('tags')->required(),
-                                Toggle::make('published')
-                                        ->onIcon('heroicon-m-check-circle')
-                                        ->offIcon('heroicon-m-x-circle'),
-                    ])->columnSpan(1),
+                        ->schema([
+                            TagsInput::make('tags')->required(),
+                            Toggle::make('published')
+                                ->onIcon('heroicon-m-check-circle')
+                                ->offIcon('heroicon-m-x-circle'),
+                        ])->columnSpan(1),
+                    // Section::make('authors')
+                    //     ->schema([
+                    //         CheckboxList::make('Authors')
+                    //         ->label('Co Authors')
+                    //         ->searchable()
+                    //         // ->multiple()
+                    //         ->relationship('authors', 'name')
+                    //         ->required(),
+                    //     ])->columnSpan(1),
                 ]),
                 // Checkbox::make('published'),
             ])->columns(3);
@@ -84,15 +94,15 @@ class PostResource extends Resource
                 TextColumn::make('title')->searchable()->sortable()->toggleable(),
                 TextColumn::make('slug')->searchable()->sortable()->toggleable(),
                 ColorColumn::make('color')->searchable()->toggleable()
-                            ->sortable()
-                            ->copyable()
-                            ->copyMessage('Color code copied')
-                            ->copyMessageDuration(1500),
+                    ->sortable()
+                    ->copyable()
+                    ->copyMessage('Color code copied')
+                    ->copyMessageDuration(1500),
                 TextColumn::make('tags')->toggleable(),
                 // CheckboxColumn::make('published'),
                 ToggleColumn::make('published')->toggleable()
-                            ->onIcon('heroicon-m-check-circle')
-                            ->offIcon('heroicon-m-x-circle'),
+                    ->onIcon('heroicon-m-check-circle')
+                    ->offIcon('heroicon-m-x-circle'),
                 TextColumn::make('category.name')->searchable()->sortable()->toggleable(),
                 TextColumn::make('created_at')->date()->searchable()->sortable()->toggleable(),
             ])
@@ -113,7 +123,7 @@ class PostResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            AuthorsRelationManager::class
         ];
     }
 
