@@ -24,6 +24,7 @@ use Illuminate\Support\Str;
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Filters\SelectFilter;
 
 class UserResource extends Resource implements HasShieldPermissions
 {
@@ -129,25 +130,34 @@ class UserResource extends Resource implements HasShieldPermissions
                     ->color('gray')
                     ->alignCenter(),
                 TextColumn::make('created_at')
-                ->label(__('Created at'))
-                ->date()
-                ->searchable()
-                ->sortable()
-                ->toggleable(),
+                    ->label(__('Created at'))
+                    ->date()
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
                 CheckboxColumn::make('status')
                     ->toggleable()
                     ->label("State"),
                 TextColumn::make('roles.name')
                     ->toggleable()
                     ->badge(),
-               
             ])
             ->filters([
                 Filter::make('status')->query(
-                    function(Builder $query): Builder {
+                    function (Builder $query): Builder {
                         return $query->where('status', true);
                     }
                 ),
+                SelectFilter::make('roles')->label(__('Role'))
+                    ->relationship('roles', 'name')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('Status')->label(__('State'))
+                    ->options([
+                        '1' => 'Active',
+                        '0' => 'Inactive'
+                    ])
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
