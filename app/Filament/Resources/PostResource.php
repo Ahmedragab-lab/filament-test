@@ -56,9 +56,9 @@ class PostResource extends Resource
                         ColorPicker::make('color')->required(),
                         Select::make('category_id')
                             ->label('Category')
-                            // ->options(Category::all()->pluck('name', 'id'))
                             ->relationship('category', 'name')
                             ->searchable()
+                            ->preload()
                             ->required(),
                         MarkdownEditor::make('content')->required()->columnSpanFull(),
                     ])->columnSpan(2)->columns(2),
