@@ -15,24 +15,56 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
+use Faker\Core\File;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Set;
+use Filament\Tables\Columns\CheckboxColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-folder';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     public static function getForm(bool $view = false): array {
         return [
-            TextInput::make('name')
-                ->label(__('admin.categoryname'))
-                ->required()
-                ->maxLength(255),
-            TextInput::make('slug')
-                ->label(__('admin.slug'))
-                ->required()
-                ->maxLength(255),
+            Section::make([
+                Grid::make()->schema([
+                    TextInput::make('name')
+                        ->label(__('admin.categoryname'))
+                        ->required()
+                        ->live(onBlur: true)
+                        ->afterStateUpdated(fn (string $operation, $state,Set $set) 
+                                => $set('slug', Str::slug($state)))
+                        ->minLength(1)
+                        ->maxLength(150),
+                    TextInput::make('slug')
+                        ->label(__('admin.slug'))
+                        ->required()
+                        ->disabled()
+                        ->unique(Category::class, 'slug', ignoreRecord: true)
+                        ->dehydrated()
+                        ->minLength(1)
+                        ->maxLength(150),
+                ]),
+                FileUpload::make('image')
+                    ->image()
+                    ->disk('public')
+                    ->directory('categories')
+                    ->required(),
+                Toggle::make('is_active')
+                    ->default(true)
+                    ->label(__('Active'))
+                    ->required()
+                    ->onIcon('heroicon-m-check-circle')
+                    ->offIcon('heroicon-m-x-circle'),
+            ])
         ];
     }
     public static function form(Form $form): Form
@@ -45,8 +77,11 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('image')->toggleable(),
                 TextColumn::make('name')->label(__('admin.categoryname'))->searchable()->sortable(),
                 TextColumn::make('slug')->label(__('admin.slug'))->searchable()->sortable(),
+                CheckboxColumn::make('is_active')->toggleable()->label("Active"),
+                TextColumn::make('created_at')->date()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\Filter::make('created_at')

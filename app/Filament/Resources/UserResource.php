@@ -162,20 +162,8 @@ class UserResource extends Resource implements HasShieldPermissions
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make()
-                        ->slideOver()
-                        ->recordTitle(fn($record) => __('User : ') . $record->id)
-                        ->form(UserResource::getForm(true)),
-                    Tables\Actions\EditAction::make()
-                        ->slideOver()
-                        ->recordTitle(fn($record) => __('User : ') . $record->id)
-                        ->form(UserResource::getForm())
-                        ->mutateFormDataUsing(function ($record, array $data) {
-                            if (empty($data['password'])) {
-                                unset($data['password']);
-                            }
-                            return $data;
-                        }),
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
                 ])
             ])
