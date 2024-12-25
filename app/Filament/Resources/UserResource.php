@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PostResource\RelationManagers\CommentsRelationManager;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers\OrdersRelationManager;
+use App\Models\Order;
 use App\Models\User;
 use Faker\Provider\ar_EG\Text;
 use Filament\Forms;
@@ -177,7 +179,8 @@ class UserResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-            CommentsRelationManager::class,
+            // CommentsRelationManager::class,
+            OrdersRelationManager::class
         ];
     }
 

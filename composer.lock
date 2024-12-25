@@ -4,8 +4,71 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ebb9ba2c42b7bec188c6b2f206d95310",
+    "content-hash": "82d0d37418774d58a2e86702ad81ef3c",
     "packages": [
+        {
+            "name": "anlutro/l4-settings",
+            "version": "v1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/anlutro/laravel-settings.git",
+                "reference": "8e44bf723a2aa79fd6ea3e005cc2ccc2fb4631dc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/anlutro/laravel-settings/zipball/8e44bf723a2aa79fd6ea3e005cc2ccc2fb4631dc",
+                "reference": "8e44bf723a2aa79fd6ea3e005cc2ccc2fb4631dc",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/cache": "^4.2|^5|^6|^7|^8|^9|^10|^11",
+                "illuminate/support": "^4.2|^5|^6|^7|^8|^9|^10|^11"
+            },
+            "require-dev": {
+                "laravel/framework": ">=5.7",
+                "mockery/mockery": "^1.2",
+                "phpunit/phpunit": "^8.0"
+            },
+            "suggest": {
+                "illuminate/database": "Save settings to a database table.",
+                "illuminate/filesystem": "Save settings to a JSON file."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Setting": "anlutro\\LaravelSettings\\Facade"
+                    },
+                    "providers": [
+                        "anlutro\\LaravelSettings\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "anlutro\\LaravelSettings\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andreas Lutro",
+                    "email": "anlutro@gmail.com"
+                }
+            ],
+            "description": "Persistent settings in Laravel.",
+            "support": {
+                "issues": "https://github.com/anlutro/laravel-settings/issues",
+                "source": "https://github.com/anlutro/laravel-settings/tree/v1.4.1"
+            },
+            "time": "2024-06-14T10:45:27+00:00"
+        },
         {
             "name": "anourvalar/eloquent-serialize",
             "version": "1.2.27",
