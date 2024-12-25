@@ -31,6 +31,7 @@ class CategoryResource extends Resource
     protected static ?string $model = Category::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static ?int $navigationSort = 4;
 
     public static function getForm(bool $view = false): array {
         return [

@@ -32,8 +32,9 @@ use Filament\Tables\Filters\SelectFilter;
 class UserResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = User::class;
-
     protected static ?string $navigationIcon = 'heroicon-s-users';
+    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?int $navigationSort = 2;
     public static function getPermissionPrefixes(): array
     {
         return [
@@ -182,6 +183,11 @@ class UserResource extends Resource implements HasShieldPermissions
             // CommentsRelationManager::class,
             OrdersRelationManager::class
         ];
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'email', 'phone'];
     }
 
     public static function getPages(): array

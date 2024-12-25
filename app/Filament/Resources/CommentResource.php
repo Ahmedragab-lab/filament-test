@@ -25,6 +25,7 @@ class CommentResource extends Resource
     protected static ?string $model = Comment::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 5;
     public static function getPermissionPrefixes(): array
     {
         return [
