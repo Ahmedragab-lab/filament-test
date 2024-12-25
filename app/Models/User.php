@@ -41,4 +41,8 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->morphMany(Comment::class, 'commentable');
     }
+
+    public function orders(){
+        return $this->hasMany(Order::class);
+    }
 }
