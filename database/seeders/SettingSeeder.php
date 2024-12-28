@@ -14,7 +14,7 @@ class SettingSeeder extends Seeder {
      */
     public function run() {
         Setting::truncate();
-        Setting::create(['key' => 'name','value' => 'الجامعه الاسلاميه المفتوحه',]);
+        Setting::create(['key' => 'name','value' => 'الجامعه الاسلاميه المفتوحه']);
         Setting::create(['key' => 'email','value' => 'test@gmail.com',]);
         Setting::create(['key' => 'phone','value' => '+20 102130303030',]);
         Setting::create(['key' => 'whatsup','value' => 'https://wa.me/+20 102130303030',]);

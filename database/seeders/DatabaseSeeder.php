@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ShieldSeeder::class,
             UserSeeder::class,
-            SettingSeeder::class
+            // SettingSeeder::class
         ]);
     }
 }
