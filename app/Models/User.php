@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class User extends Authenticatable implements FilamentUser
@@ -44,5 +45,9 @@ class User extends Authenticatable implements FilamentUser
 
     public function orders(){
         return $this->hasMany(Order::class);
+    }
+    public function company(): HasOne
+    {
+        return $this->hasOne(Company::class);
     }
 }

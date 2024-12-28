@@ -7,7 +7,10 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
+
 class CounterPage extends Page implements HasForms
 {
     use InteractsWithForms;
@@ -15,28 +18,27 @@ class CounterPage extends Page implements HasForms
 
     protected static string $view = 'filament.pages.counter-page';
     protected static ?string $model = SystemSetting::class;
-    
-    public $company_name='';
-    public $company_logo='';
-    public $time_zone='UTC';
-    public $date_format='Y-m-d';
-    public $language='en';
-    public $theme='light';
-    public function mount(): void {
-        $currentSettings = SystemSetting::first();
-        if ($currentSettings) {
-            $this->company_name = $currentSettings->company_name;
-            $this->company_logo = $currentSettings->company_logo??[];
-            $this->time_zone = $currentSettings->time_zone;
-            $this->date_format = $currentSettings->date_format;
-            $this->language = $currentSettings->language;
-            $this->theme = $currentSettings->theme;
-        }
-    }
-    public static function shouldRegisterNavigation(): bool
+
+    public  $data=[];
+    public function mount(): void
     {
-        return true;
+        $currentSettings = SystemSetting::firstOrNew();
+        $this->form->fill([
+            'company_name' => $currentSettings->company_name,
+            'company_logo' => $currentSettings->company_logo,
+            'time_zone' => $currentSettings->time_zone,
+            'date_format' => $currentSettings->date_format,
+            'language' => $currentSettings->language,
+            'theme' => $currentSettings->theme,
+        ]);
+        // if ($currentSettings) {
+            
+        // }
     }
+    // public static function shouldRegisterNavigation(): bool
+    // {
+    //     return true;
+    // }
 
     public function form(Form $form): Form
     {
@@ -44,11 +46,9 @@ class CounterPage extends Page implements HasForms
             ->schema([
                 Forms\Components\Section::make(__('Company Information'))
                     ->schema([
-                        Forms\Components\FileUpload::make('company_logo')
+                        FileUpload::make('company_logo')
                             ->label('Company Logo')
-                            ->image()
-                            ->maxFiles(1) // Ensure only one file can be uploaded
-                            ->getUploadedFileNameForStorageUsing(fn($file) => $file->store('logos'))
+                            ->disk('public')
                             ->directory('logos'),
                         Forms\Components\TextInput::make('company_name')
                             ->label('Company Name')
@@ -110,37 +110,41 @@ class CounterPage extends Page implements HasForms
 
                 ])->alignEnd(),
 
-            ]);
+            ])
+            ->statePath('data');
     }
 
-    public function saveChanges(){
-        $validatedSettings = $this->validate([
-            'company_name' => 'required|min:5|max:150',
-            'company_logo' => 'nullable',
-            'time_zone' => 'required',
-            'date_format' => 'required',
-            'language' => 'required',
-            'theme' => 'required',
-        ]);
-        
-
-
+    public function saveChanges()
+    {
+        // dd($this->form->getState());
+        $data = $this->form->getState();
         $systemSetting = SystemSetting::firstOrNew([]);
-        $systemSetting->fill($validatedSettings);
+        $systemSetting->fill($data);
         $systemSetting->save();
 
-        session()->flash('message', __('Settings saved successfully.'));
+        Notification::make()
+            ->success()
+            ->title(__('filament-panels::resources/pages/edit-record.notifications.saved.title'))
+            ->send();
     }
-    public function restoreDefaults()
+    public function restoreDefaults(): void
     {
+        $this->form->fill([
+            'company_name' => 'Rubix',
+            'company_logo' => null,
+            'time_zone' => 'UTC',
+            'date_format' => 'Y-m-d',
+            'language' => 'en',
+            'theme' => 'light',
+        ]);
 
-        $this->company_name = 'Rubix';
-        $this->company_logo ??= '';
-        $this->time_zone = 'UTC';
-        $this->date_format = 'Y-m-d';
-        $this->language = 'en';
-        $this->theme = 'light';
+        $systemSetting = SystemSetting::firstOrNew([]);
+        $systemSetting->fill($this->form->getState());
+        $systemSetting->save();
 
-        $this->saveChanges();
+        Notification::make()
+            ->success()
+            ->title(__('filament-panels::resources/pages/edit-record.notifications.saved.title'))
+            ->send();
     }
 }
