@@ -59,10 +59,6 @@ class EditCompany2 extends Page implements HasForms
     public function save(): void
     {
         try {
-            // $validatedSettings = $this->validate([
-            //     'name' => 'required|min:5|max:150',
-            //     'logo' => 'nullable',
-            // ]);
             // dd($this->form->getState());
             $data = $this->form->getState();
             $company2 = Company2::firstOrNew([]);

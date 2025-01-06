@@ -13,47 +13,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('settings', function (Blueprint $table) {
-            $table->string('key')->primary();
-            // $table->string('label');
-            $table->text('value')->nullable();
-            $table->json('attributes')->nullable();
-            $table->string('type');
+            $table->id();
+            $table->string('name');
+            $table->string('email');
             $table->timestamps();
         });
-        Setting::create([
-            'key' => 'site_name',
-            'label' => 'Site Name',
-            'value' => null,
-            'type' => 'text',
-        ]);
-
-        // Setting::create([
-        //     'key' => 'basic_plan_price',
-        //     'label' => 'Basic Plan Price',
-        //     'value' => 1000,
-        //     'type' => 'number',
-        // ]);
-
-        // Setting::create([
-        //     'key' => 'pro_plan_price',
-        //     'label' => 'Pro Plan Price',
-        //     'value' => 2000,
-        //     'type' => 'number',
-        // ]);
-
-        // Setting::create([
-        //     'key' => 'environment',
-        //     'label' => 'Environment',
-        //     'value' => 'production',
-        //     'type' => 'select',
-        //     'attributes' => [
-        //         'options' => [
-        //             'production' => 'Production',
-        //             'staging' => 'Staging',
-        //             'local' => 'Local',
-        //         ],
-        //     ],
-        // ]);
+      
     }
 
     /**

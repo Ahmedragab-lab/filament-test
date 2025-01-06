@@ -11,12 +11,12 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 
-class CounterPage extends Page implements HasForms
+class Settings5 extends Page implements HasForms
 {
     use InteractsWithForms;
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string $view = 'filament.pages.settings5';
 
-    protected static string $view = 'filament.pages.counter-page';
     protected static ?string $model = SystemSetting::class;
 
     public  $data=[];
@@ -139,4 +139,5 @@ class CounterPage extends Page implements HasForms
             ->title(__('filament-panels::resources/pages/edit-record.notifications.saved.title'))
             ->send();
     }
+
 }
